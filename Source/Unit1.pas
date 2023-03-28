@@ -411,8 +411,8 @@ end;
 procedure TMain.AboutBtnClick(Sender: TObject);
 begin
   AllowHide:=false;
-  Application.MessageBox(PChar(Caption + ' 0.4' + #13#10 +
-  IDS_LAST_UPDATE + ' 06.03.2023' + #13#10 +
+  Application.MessageBox(PChar(Caption + ' 0.4.1' + #13#10 +
+  IDS_LAST_UPDATE + ' 28.03.2023' + #13#10 +
   'https://r57zone.github.io' + #13#10 +
   'r57zone@gmail.com'), PChar(IDS_ABOUT), MB_ICONINFORMATION);
   AllowHide:=true;
@@ -504,6 +504,8 @@ begin
   end;
   ShowWindow(Handle, SW_SHOW);
   SetForegroundWindow(Handle);
+  if AddDialog.Showing then
+    SetForegroundWindow(AddDialog.Handle);
 end;
 
 procedure TMain.CloseMenuBtnClick(Sender: TObject);

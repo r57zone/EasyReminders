@@ -72,7 +72,7 @@ object AddDialog: TAddDialog
     TabOrder = 4
   end
   object DayCountEdt: TEdit
-    Left = 184
+    Left = 185
     Top = 68
     Width = 55
     Height = 21
