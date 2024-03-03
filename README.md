@@ -8,8 +8,8 @@ Reminder apps for Windows. Add a reminder for a specific day, day and month, or 
 ## Setup
 1. Unzip the [notifications app](https://github.com/r57zone/Notifications), for example, to `C:\Program Files\Notifications` and run 1 time.
 2. Unzip EasyReminders to `C:\Program Files\EasyReminders`.
-3. For autorun, add a shortcut to the "Reminders.exe" program to startup - Windows `%AppData%\Microsoft\Windows\Start Menu\Programs\Startup`.
-4. You can also install ["Notification Center"](https://github.com/r57zone/Notification-center) to see a reminder if you leave your computer.
+3. For autorun, add a shortcut to the `Reminders.exe` program to startup - Windows `%AppData%\Microsoft\Windows\Start Menu\Programs\Startup`.
+4. You can also install [Notification Center](https://github.com/r57zone/NotificationCenter) to see a reminder if you leave your computer.
 
 ## Screenshots
 ![](https://user-images.githubusercontent.com/9499881/223116808-78bcff19-0502-42d2-b6f9-54c5e9a84830.png)

@@ -6,8 +6,8 @@
 ## Настройка
 1. Распакуйте [приложение уведомлений](https://github.com/r57zone/Notifications), например, в `C:\Program Files\Notifications` и запустите 1 раз.
 2. Распакуйте EasyReminders в `C:\Program Files\EasyReminders`.
-3. Для автозапуска добавьте ярлык программы "Reminders.exe" в автозагрузку - Windows `%AppData%\Microsoft\Windows\Start Menu\Programs\Startup`.
-4. Можно также установить ["Центр уведомлений"](https://github.com/r57zone/Notification-center), чтобы увидеть напоминание, если вы отошли от компьютера.
+3. Для автозапуска добавьте ярлык программы `Reminders.exe` в автозагрузку - Windows `%AppData%\Microsoft\Windows\Start Menu\Programs\Startup`.
+4. Можно также установить [Центр уведомлений](https://github.com/r57zone/NotificationCenter), чтобы увидеть напоминание, если вы отошли от компьютера.
 
 ## Скриншоты
 ![](https://user-images.githubusercontent.com/9499881/223116699-5871fe67-fa40-41f4-8231-81d7fc4c3e95.png)

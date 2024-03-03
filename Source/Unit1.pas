@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ComCtrls, XPMan, ShellAPI, DateUtils, Registry, Menus,
-  ExtCtrls;
+  ExtCtrls, IniFiles;
 
 type TReminder = record
     Name: string;
@@ -77,9 +77,10 @@ var
   CurReminderIndex: integer; // Для изменения выбранного напоминания
   AllowClose: boolean = false;
   AllowHide: boolean = true;
+  AddDefaultTime: string; // Время по умолчанию в добавлении
   CurrentLanguage: string;
 
-  IDS_ADD, IDS_CHANGE, IDS_ABOUT, IDS_LAST_UPDATE: string;
+  IDS_ADD, IDS_CHANGE, IDS_REMOVE_CONFIRM, IDS_ABOUT, IDS_LAST_UPDATE: string;
 
   IDS_REMINDER, IDS_CURRENT_DAY_TYPE, IDS_EVERY_FEW_DAYS_TYPE, IDS_EVERY_FEW_DAYS_TYPE2,
   IDS_EVERY_MONTH_AND_DAY_TYPE, IDS_CURRENT_DAY_MONTH_TYPE: string;
@@ -252,7 +253,12 @@ begin
 
     // День месяца
     end else if (Reminders[i].RType = EveryMonthAndDayType) and (SecondOfTheDay(Time) > Reminders[i].TimeSec) then begin
-      if FormatDateTime('d', Date) = FormatDateTime('d', Reminders[i].Date) then begin
+      if (DayOfTheMonth(Date) = DayOfTheMonth(Reminders[i].Date)) or
+          // Если текущий день больше, чем в этом месяце дней, то показываем в этот день (конец месяца)
+         ( (DayOfTheMonth(Reminders[i].Date) > DayOfTheMonth(Date) ) and // Напоминание больше текущей даты
+         (DayOfTheMonth(Date) = DaysInAMonth(YearOf(Date), MonthOf(Date)) )) // Если текущий день равен кол-ву дней в месяце
+
+      then begin
         SendNotfication(IDS_REMINDER, Reminders[i].Name);
         Reminders[i].LastNoticeDate:=DateToStr(Date);
         ChangeReminders:=true;
@@ -260,7 +266,14 @@ begin
 
     // День и месяц
     end else if (Reminders[i].RType = CurrentDayMonthType) and (SecondOfTheDay(Time) > Reminders[i].TimeSec) then begin
-      if FormatDateTime('d m', Date) = FormatDateTime('d m', Reminders[i].Date) then begin
+      if (MonthOf(Date) = MonthOf(Reminders[i].Date)) and
+         ( (DayOfTheMonth(Date) = DayOfTheMonth(Reminders[i].Date)) or
+            (
+              (DayOfTheMonth(Reminders[i].Date) > DayOfTheMonth(Date) ) and // Напоминание больше текущей даты
+              (DayOfTheMonth(Date) = DaysInAMonth(YearOf(Date), MonthOf(Date)) ) // Если текущий день равен кол-ву дней в месяце
+            )
+         ) // Если текущий день больше, чем в это месяце дней, то показываем в этот день (концец месяца)
+       then begin
         SendNotfication(IDS_REMINDER, Reminders[i].Name);
         Reminders[i].LastNoticeDate:=DateToStr(Date);
         ChangeReminders:=true;
@@ -288,7 +301,7 @@ begin
   Result:=pcLCA;
 end;
 
-procedure Tray(ActInd: integer);  //1 - Добавить, 2 - Обновить, 3 - Удалить
+procedure Tray(ActInd: integer);  // 1 - добавить, 2 - обновить, 3 - удалить
 var
   NIM: TNotifyIconData;
 begin
@@ -309,17 +322,25 @@ begin
 end;
 
 procedure TMain.FormCreate(Sender: TObject);
+var
+  Ini: TIniFile;
 begin
   WM_TASKBARCREATED:=RegisterWindowMessage('TaskbarCreated');
   AppHide;
 
-  CurrentLanguage:=GetLocaleInformation(LOCALE_SENGLANGUAGE); // + 'test'
+  Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Setup.ini');
+  AddDefaultTime:=Ini.ReadString('Main', 'DefaultTime', '13:00:00');
+  Ini.Free;
+
+  CurrentLanguage:=GetLocaleInformation(LOCALE_SENGLANGUAGE);
   if CurrentLanguage <> 'Russian' then begin
     IDS_ADD:='Add';
     AddBtn.Caption:=IDS_ADD;
     IDS_CHANGE:='Change';
     ChangeBtn.Caption:=IDS_CHANGE;
     RemBtn.Caption:='Remove';
+    IDS_REMOVE_CONFIRM:='Remove this reminder?' + #13#10#13#10 + 'Name: %s' + #13#10 + 'Type: %s' + #13#10 + 'Date and time: %s';
+
     Caption:='Reminders';
     ListView.Column[0].Caption:='Date';
     ListView.Column[1].Caption:='Time';
@@ -352,6 +373,7 @@ begin
   end else begin
     IDS_ADD:='Добавить';
     IDS_CHANGE:='Изменить';
+    IDS_REMOVE_CONFIRM:='Удалить это напоминание?' + #13#10#13#10 + 'Название: %s' + #13#10 + 'Тип: %s' + #13#10 + 'Дата и время: %s';
 
     IDS_REMINDER:='Напоминание';
     IDS_CURRENT_DAY_TYPE:='Дата';
@@ -395,24 +417,26 @@ begin
   AddDialog.NofifyNameEdt.Text:='';
   AddDialog.ByDateRB.Checked:=true;
   AddDialog.DatePicker.Date:=Date;
-  AddDialog.TimePicker.Time:=StrToTime('13:00:00');
+  AddDialog.TimePicker.Time:=StrToTime(AddDefaultTime);
   AddDialog.DoneBtn.Caption:=IDS_ADD;
 end;
 
 procedure TMain.RemBtnClick(Sender: TObject);
 begin
-  if ListView.ItemIndex <> -1 then begin
+  AllowHide:=false;
+  if (ListView.ItemIndex <> -1) and (MessageBox(Handle, PChar(Format(IDS_REMOVE_CONFIRM, [ListView.Items.Item[ListView.ItemIndex].SubItems[2], ListView.Items.Item[ListView.ItemIndex].SubItems[1], ListView.Items.Item[ListView.ItemIndex].Caption + ', ' + ListView.Items.Item[ListView.ItemIndex].SubItems[0] ])), PChar(IDS_REMINDER), 35) = 6) then begin
     RemReminder(ListView.ItemIndex);
     UpdateRemindersView;
     SaveReminders;
   end;
+  AllowHide:=true;
 end;
 
 procedure TMain.AboutBtnClick(Sender: TObject);
 begin
   AllowHide:=false;
-  Application.MessageBox(PChar(Caption + ' 0.4.1' + #13#10 +
-  IDS_LAST_UPDATE + ' 28.03.2023' + #13#10 +
+  Application.MessageBox(PChar(Caption + ' 0.5' + #13#10 +
+  IDS_LAST_UPDATE + ' 29.02.24' + #13#10 +
   'https://r57zone.github.io' + #13#10 +
   'r57zone@gmail.com'), PChar(IDS_ABOUT), MB_ICONINFORMATION);
   AllowHide:=true;

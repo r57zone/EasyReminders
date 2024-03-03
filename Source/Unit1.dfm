@@ -27,7 +27,7 @@ object Main: TMain
     Width = 75
     Height = 25
     Caption = #1044#1086#1073#1072#1074#1080#1090#1100
-    TabOrder = 0
+    TabOrder = 1
     OnClick = AddBtnClick
   end
   object ListView: TListView
@@ -55,7 +55,7 @@ object Main: TMain
     ReadOnly = True
     RowSelect = True
     PopupMenu = ListViewPopupMenu
-    TabOrder = 1
+    TabOrder = 0
     ViewStyle = vsReport
     OnDblClick = ListViewDblClick
     OnKeyPress = ListViewKeyPress
@@ -66,7 +66,7 @@ object Main: TMain
     Width = 75
     Height = 25
     Caption = #1059#1076#1072#1083#1080#1090#1100
-    TabOrder = 2
+    TabOrder = 3
     OnClick = RemBtnClick
   end
   object AboutBtn: TButton
@@ -75,7 +75,7 @@ object Main: TMain
     Width = 27
     Height = 25
     Caption = '?'
-    TabOrder = 3
+    TabOrder = 4
     OnClick = AboutBtnClick
   end
   object ChangeBtn: TButton
@@ -84,7 +84,7 @@ object Main: TMain
     Width = 75
     Height = 25
     Caption = #1048#1079#1084#1077#1085#1080#1090#1100
-    TabOrder = 4
+    TabOrder = 2
     OnClick = ChangeBtnClick
   end
   object XPManifest1: TXPManifest
