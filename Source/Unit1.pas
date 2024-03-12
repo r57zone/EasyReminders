@@ -7,7 +7,8 @@ uses
   Dialogs, StdCtrls, ComCtrls, XPMan, ShellAPI, DateUtils, Registry, Menus,
   ExtCtrls, IniFiles;
 
-type TReminder = record
+type
+  TReminder = record
     Name: string;
     RType: string;
     CountDays: integer;
@@ -71,13 +72,14 @@ type
 var
   Main: TMain;
   NoticeFormMode: integer;
-  WM_TASKBARCREATED: Cardinal;
+  WM_TASKBARCREATED: cardinal;
   NotificationApp: string;
   Reminders: array of TReminder;
+  DBFileName: string;
   CurReminderIndex: integer; // Для изменения выбранного напоминания
   AllowClose: boolean = false;
   AllowHide: boolean = true;
-  AddDefaultTime: string; // Время по умолчанию в добавлении
+  AddDefaultTime: TTime; // Время по умолчанию в добавлении
   CurrentLanguage: string;
 
   IDS_ADD, IDS_CHANGE, IDS_REMOVE_CONFIRM, IDS_ABOUT, IDS_LAST_UPDATE: string;
@@ -202,7 +204,7 @@ begin
     RemindersFile.Add(DateToStr(Reminders[i].Date) + #9 + TimeStr + #9 + Reminders[i].RType + #9 + IntToStr(Reminders[i].CountDays) + #9 + Reminders[i].LastNoticeDate + #9 + Reminders[i].Name);
   end;
 
-  RemindersFile.SaveToFile(ExtractFilePath(ParamStr(0)) + 'Reminders.txt');
+  RemindersFile.SaveToFile(DBFileName);
   RemindersFile.Free;
 end;
 
@@ -323,13 +325,20 @@ end;
 
 procedure TMain.FormCreate(Sender: TObject);
 var
-  Ini: TIniFile;
+  Ini: TIniFile; i: integer;
 begin
   WM_TASKBARCREATED:=RegisterWindowMessage('TaskbarCreated');
   AppHide;
 
+  DBFileName:=ExtractFilePath(ParamStr(0)) + 'Reminders.txt';
+  for i:=1 to ParamCount do
+    if (LowerCase(ParamStr(i)) = '-db') and (Trim(ParamStr(i + 1)) <> '') then begin
+      DBFileName:=ParamStr(i + 1);
+      break;
+    end;
+
   Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Setup.ini');
-  AddDefaultTime:=Ini.ReadString('Main', 'DefaultTime', '13:00:00');
+  AddDefaultTime:=StrToTime(Ini.ReadString('Main', 'DefaultTime', '13:00:00'));
   Ini.Free;
 
   CurrentLanguage:=GetLocaleInformation(LOCALE_SENGLANGUAGE);
@@ -400,8 +409,8 @@ begin
   NotificationApp:=GetNotificationAppPath;
   if NotificationApp = '' then Application.MessageBox(PChar(IDS_NOTIFICATION_APP_NOT_FOUND), PChar(Caption), MB_ICONWARNING);
 
-  if FileExists(ExtractFilePath(ParamStr(0)) + 'Reminders.txt') then begin
-    LoadReminders(ExtractFilePath(ParamStr(0)) + 'Reminders.txt');
+  if FileExists(DBFileName) then begin
+    LoadReminders(DBFileName);
     UpdateRemindersView;
   end;
 
@@ -417,7 +426,7 @@ begin
   AddDialog.NofifyNameEdt.Text:='';
   AddDialog.ByDateRB.Checked:=true;
   AddDialog.DatePicker.Date:=Date;
-  AddDialog.TimePicker.Time:=StrToTime(AddDefaultTime);
+  AddDialog.TimePicker.Time:=AddDefaultTime;
   AddDialog.DoneBtn.Caption:=IDS_ADD;
 end;
 
@@ -435,8 +444,8 @@ end;
 procedure TMain.AboutBtnClick(Sender: TObject);
 begin
   AllowHide:=false;
-  Application.MessageBox(PChar(Caption + ' 0.5' + #13#10 +
-  IDS_LAST_UPDATE + ' 29.02.24' + #13#10 +
+  Application.MessageBox(PChar(Caption + ' 0.5.1' + #13#10 +
+  IDS_LAST_UPDATE + ' 12.03.24' + #13#10 +
   'https://r57zone.github.io' + #13#10 +
   'r57zone@gmail.com'), PChar(IDS_ABOUT), MB_ICONINFORMATION);
   AllowHide:=true;

@@ -5,7 +5,7 @@ object AddDialog: TAddDialog
   BorderStyle = bsSingle
   Caption = #1053#1072#1087#1086#1084#1080#1085#1072#1085#1080#1077
   ClientHeight = 223
-  ClientWidth = 296
+  ClientWidth = 354
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -99,7 +99,7 @@ object AddDialog: TAddDialog
   object NofifyNameEdt: TEdit
     Left = 8
     Top = 159
-    Width = 280
+    Width = 225
     Height = 21
     TabOrder = 16
     OnKeyDown = NofifyNameEdtKeyDown
@@ -115,7 +115,7 @@ object AddDialog: TAddDialog
     TabOrder = 6
   end
   object SetNextDayBtn: TButton
-    Left = 233
+    Left = 291
     Top = 12
     Width = 56
     Height = 23
@@ -194,5 +194,31 @@ object AddDialog: TAddDialog
     Caption = #1053#1077#1076#1077#1083#1103
     TabOrder = 13
     OnClick = SetEveryDayWeekBtnClick
+  end
+  object TodayBtn: TButton
+    Left = 233
+    Top = 12
+    Width = 56
+    Height = 23
+    Caption = #1057#1077#1075#1086#1076#1085#1103
+    TabOrder = 19
+  end
+  object DefTimeBtn: TButton
+    Left = 291
+    Top = 37
+    Width = 56
+    Height = 23
+    Caption = #1055#1086' '#1091#1084#1086#1083#1095'.'
+    TabOrder = 20
+    OnClick = DefTimeBtnClick
+  end
+  object SetEveryDayMonthBtn: TButton
+    Left = 291
+    Top = 62
+    Width = 56
+    Height = 23
+    Caption = #1052#1077#1089#1103#1094
+    TabOrder = 21
+    OnClick = SetEveryDayMonthBtnClick
   end
 end

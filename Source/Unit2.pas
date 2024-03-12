@@ -28,6 +28,9 @@ type
     SetEveryDaySubBtn: TButton;
     SetEveryDayAddBtn: TButton;
     SetEveryDayWeekBtn: TButton;
+    TodayBtn: TButton;
+    DefTimeBtn: TButton;
+    SetEveryDayMonthBtn: TButton;
     procedure CancelBtnClick(Sender: TObject);
     procedure DoneBtnClick(Sender: TObject);
     procedure NofifyNameEdtKeyDown(Sender: TObject; var Key: Word;
@@ -47,6 +50,8 @@ type
     procedure SetEveryDaySubBtnClick(Sender: TObject);
     procedure SetEveryDayAddBtnClick(Sender: TObject);
     procedure SetEveryDayWeekBtnClick(Sender: TObject);
+    procedure DefTimeBtnClick(Sender: TObject);
+    procedure SetEveryDayMonthBtnClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -167,9 +172,12 @@ begin
   Caption:=Main.ListView.Column[3].Caption;
   if CurrentLanguage <> 'Russian' then begin
     ByDateRB.Caption:='By date';
+    TodayBtn.Caption:='Today';
     SetNextDayBtn.Caption:='Tomorrow';
     SetCurTimeBtn.Caption:='Now';
+    DefTimeBtn.Caption:='By default';
     SetEveryDayWeekBtn.Caption:='Week';
+    SetEveryDayMonthBtn.Caption:='Month';
     EveryNdaysRB.Caption:='Every (n) days';
     DayOfTheMonthRB.Caption:='Day of the month';
     DayAndMonthRB.Caption:='Day and month';
@@ -212,6 +220,16 @@ end;
 procedure TAddDialog.SetEveryDayWeekBtnClick(Sender: TObject);
 begin
   DayCountEdt.Text:='7';
+end;
+
+procedure TAddDialog.DefTimeBtnClick(Sender: TObject);
+begin
+  TimePicker.Time:=AddDefaultTime;
+end;
+
+procedure TAddDialog.SetEveryDayMonthBtnClick(Sender: TObject);
+begin
+  DayCountEdt.Text:='30';
 end;
 
 end.

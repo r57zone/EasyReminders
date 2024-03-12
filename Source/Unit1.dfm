@@ -6,7 +6,7 @@ object Main: TMain
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1053#1072#1087#1086#1084#1080#1085#1072#1085#1080#1103
-  ClientHeight = 304
+  ClientHeight = 303
   ClientWidth = 472
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -23,7 +23,7 @@ object Main: TMain
   TextHeight = 13
   object AddBtn: TButton
     Left = 7
-    Top = 272
+    Top = 271
     Width = 75
     Height = 25
     Caption = #1044#1086#1073#1072#1074#1080#1090#1100
@@ -33,8 +33,8 @@ object Main: TMain
   object ListView: TListView
     Left = 8
     Top = 8
-    Width = 457
-    Height = 257
+    Width = 456
+    Height = 256
     Columns = <
       item
         Caption = #1044#1072#1090#1072
@@ -62,7 +62,7 @@ object Main: TMain
   end
   object RemBtn: TButton
     Left = 167
-    Top = 272
+    Top = 271
     Width = 75
     Height = 25
     Caption = #1059#1076#1072#1083#1080#1090#1100
@@ -70,8 +70,8 @@ object Main: TMain
     OnClick = RemBtnClick
   end
   object AboutBtn: TButton
-    Left = 439
-    Top = 272
+    Left = 438
+    Top = 271
     Width = 27
     Height = 25
     Caption = '?'
@@ -80,7 +80,7 @@ object Main: TMain
   end
   object ChangeBtn: TButton
     Left = 87
-    Top = 272
+    Top = 271
     Width = 75
     Height = 25
     Caption = #1048#1079#1084#1077#1085#1080#1090#1100
