@@ -32,7 +32,7 @@ object AddDialog: TAddDialog
     Width = 75
     Height = 25
     Caption = #1044#1086#1073#1072#1074#1080#1090#1100
-    TabOrder = 17
+    TabOrder = 20
     OnClick = DoneBtnClick
   end
   object CancelBtn: TButton
@@ -41,7 +41,7 @@ object AddDialog: TAddDialog
     Width = 75
     Height = 25
     Caption = #1054#1090#1084#1077#1085#1072
-    TabOrder = 18
+    TabOrder = 21
     OnClick = CancelBtnClick
   end
   object ByDateRB: TRadioButton
@@ -61,7 +61,7 @@ object AddDialog: TAddDialog
     Height = 21
     Date = 0.041666666666666660
     Time = 0.041666666666666660
-    TabOrder = 2
+    TabOrder = 5
   end
   object EveryNdaysRB: TRadioButton
     Left = 8
@@ -69,14 +69,14 @@ object AddDialog: TAddDialog
     Width = 105
     Height = 17
     Caption = #1050#1072#1078#1076#1099#1077' (n) '#1076#1085#1077#1081
-    TabOrder = 9
+    TabOrder = 1
   end
   object DayCountEdt: TEdit
     Left = 165
     Top = 63
     Width = 40
     Height = 21
-    TabOrder = 11
+    TabOrder = 15
     Text = '1'
     OnKeyUp = DayCountEdtKeyUp
   end
@@ -86,7 +86,7 @@ object AddDialog: TAddDialog
     Width = 137
     Height = 17
     Caption = #1044#1077#1085#1100' '#1084#1077#1089#1103#1094#1072
-    TabOrder = 14
+    TabOrder = 2
   end
   object DayAndMonthRB: TRadioButton
     Left = 8
@@ -94,14 +94,14 @@ object AddDialog: TAddDialog
     Width = 145
     Height = 17
     Caption = #1044#1077#1085#1100' '#1080' '#1084#1077#1089#1103#1094
-    TabOrder = 15
+    TabOrder = 3
   end
   object NofifyNameEdt: TEdit
     Left = 8
     Top = 159
     Width = 225
     Height = 21
-    TabOrder = 16
+    TabOrder = 19
     OnKeyDown = NofifyNameEdtKeyDown
   end
   object TimePicker: TDateTimePicker
@@ -112,7 +112,7 @@ object AddDialog: TAddDialog
     Date = 44872.000000000000000000
     Time = 44872.000000000000000000
     Kind = dtkTime
-    TabOrder = 6
+    TabOrder = 10
   end
   object SetNextDayBtn: TButton
     Left = 291
@@ -120,7 +120,7 @@ object AddDialog: TAddDialog
     Width = 56
     Height = 23
     Caption = #1047#1072#1074#1090#1088#1072
-    TabOrder = 4
+    TabOrder = 8
     OnClick = SetNextDayBtnClick
   end
   object SetCurTimeBtn: TButton
@@ -129,7 +129,7 @@ object AddDialog: TAddDialog
     Width = 56
     Height = 23
     Caption = #1057#1077#1081#1095#1072#1089
-    TabOrder = 8
+    TabOrder = 12
     OnClick = SetCurTimeBtnClick
   end
   object SetDayAddBtn: TButton
@@ -138,7 +138,7 @@ object AddDialog: TAddDialog
     Width = 23
     Height = 23
     Caption = '+'
-    TabOrder = 3
+    TabOrder = 6
     OnClick = SetDayAddBtnClick
   end
   object SetDaySubBtn: TButton
@@ -147,7 +147,7 @@ object AddDialog: TAddDialog
     Width = 23
     Height = 23
     Caption = '-'
-    TabOrder = 1
+    TabOrder = 4
     OnClick = SetDaySubBtnClick
   end
   object SetTimeSubBtn: TButton
@@ -156,7 +156,7 @@ object AddDialog: TAddDialog
     Width = 23
     Height = 23
     Caption = '-'
-    TabOrder = 5
+    TabOrder = 9
     OnClick = SetTimeSubBtnClick
   end
   object SetTimeAddBtn: TButton
@@ -165,7 +165,7 @@ object AddDialog: TAddDialog
     Width = 23
     Height = 23
     Caption = '+'
-    TabOrder = 7
+    TabOrder = 11
     OnClick = SetTimeAddBtnClick
   end
   object SetEveryDaySubBtn: TButton
@@ -174,7 +174,7 @@ object AddDialog: TAddDialog
     Width = 23
     Height = 23
     Caption = '-'
-    TabOrder = 10
+    TabOrder = 14
     OnClick = SetEveryDaySubBtnClick
   end
   object SetEveryDayAddBtn: TButton
@@ -183,7 +183,7 @@ object AddDialog: TAddDialog
     Width = 23
     Height = 23
     Caption = '+'
-    TabOrder = 12
+    TabOrder = 16
     OnClick = SetEveryDayAddBtnClick
   end
   object SetEveryDayWeekBtn: TButton
@@ -192,7 +192,7 @@ object AddDialog: TAddDialog
     Width = 56
     Height = 23
     Caption = #1053#1077#1076#1077#1083#1103
-    TabOrder = 13
+    TabOrder = 17
     OnClick = SetEveryDayWeekBtnClick
   end
   object TodayBtn: TButton
@@ -201,7 +201,7 @@ object AddDialog: TAddDialog
     Width = 56
     Height = 23
     Caption = #1057#1077#1075#1086#1076#1085#1103
-    TabOrder = 19
+    TabOrder = 7
   end
   object DefTimeBtn: TButton
     Left = 291
@@ -209,7 +209,7 @@ object AddDialog: TAddDialog
     Width = 56
     Height = 23
     Caption = #1055#1086' '#1091#1084#1086#1083#1095'.'
-    TabOrder = 20
+    TabOrder = 13
     OnClick = DefTimeBtnClick
   end
   object SetEveryDayMonthBtn: TButton
@@ -218,7 +218,7 @@ object AddDialog: TAddDialog
     Width = 56
     Height = 23
     Caption = #1052#1077#1089#1103#1094
-    TabOrder = 21
+    TabOrder = 18
     OnClick = SetEveryDayMonthBtnClick
   end
 end
