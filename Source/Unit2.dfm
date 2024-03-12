@@ -202,6 +202,7 @@ object AddDialog: TAddDialog
     Height = 23
     Caption = #1057#1077#1075#1086#1076#1085#1103
     TabOrder = 7
+    OnClick = TodayBtnClick
   end
   object DefTimeBtn: TButton
     Left = 291

@@ -52,6 +52,7 @@ type
     procedure SetEveryDayWeekBtnClick(Sender: TObject);
     procedure DefTimeBtnClick(Sender: TObject);
     procedure SetEveryDayMonthBtnClick(Sender: TObject);
+    procedure TodayBtnClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -230,6 +231,11 @@ end;
 procedure TAddDialog.SetEveryDayMonthBtnClick(Sender: TObject);
 begin
   DayCountEdt.Text:='30';
+end;
+
+procedure TAddDialog.TodayBtnClick(Sender: TObject);
+begin
+  DatePicker.Date:=Date;  
 end;
 
 end.
