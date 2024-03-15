@@ -444,8 +444,8 @@ end;
 procedure TMain.AboutBtnClick(Sender: TObject);
 begin
   AllowHide:=false;
-  Application.MessageBox(PChar(Caption + ' 0.5.1' + #13#10 +
-  IDS_LAST_UPDATE + ' 12.03.24' + #13#10 +
+  Application.MessageBox(PChar(Caption + ' 0.5.2' + #13#10 +
+  IDS_LAST_UPDATE + ' 15.03.24' + #13#10 +
   'https://r57zone.github.io' + #13#10 +
   'r57zone@gmail.com'), PChar(IDS_ABOUT), MB_ICONINFORMATION);
   AllowHide:=true;
@@ -563,28 +563,42 @@ begin
   Check;
 end;
 
+procedure ScrollToListViewItem(LV: TListview; ItemIndex: Integer);
+var
+  R: TRect;
+begin
+  R:=LV.Items[ItemIndex].DisplayRect(drBounds);
+  LV.Scroll(0, R.Top - LV.ClientHeight div 2);
+end;
+
 procedure TMain.MoveUpBtnClick(Sender: TObject);
 var
-  TempReminder: TReminder;
+  TempReminder: TReminder; LastItemIndex: integer;
 begin
   if ListView.ItemIndex > 0 then begin
+    LastItemIndex:=ListView.ItemIndex - 1;
     TempReminder:=Reminders[ListView.ItemIndex - 1];
     Reminders[ListView.ItemIndex - 1]:=Reminders[ListView.ItemIndex];
     Reminders[ListView.ItemIndex]:=TempReminder;
     UpdateRemindersView;
+    ListView.ItemIndex:=LastItemIndex;
+    ScrollToListviewItem(ListView, LastItemIndex);
     SaveReminders;
   end;
 end;
 
 procedure TMain.MoveDownBtnClick(Sender: TObject);
 var
-  TempReminder: TReminder;
+  TempReminder: TReminder; LastItemIndex: integer;
 begin
   if (ListView.ItemIndex <> -1) and (ListView.ItemIndex < ListView.Items.Count - 1) then begin
+    LastItemIndex:=ListView.ItemIndex + 1;
     TempReminder:=Reminders[ListView.ItemIndex + 1];
     Reminders[ListView.ItemIndex + 1]:=Reminders[ListView.ItemIndex];
     Reminders[ListView.ItemIndex]:=TempReminder;
     UpdateRemindersView;
+    ListView.ItemIndex:=LastItemIndex;
+    ScrollToListviewItem(ListView, LastItemIndex);
     SaveReminders;
   end;
 end;
