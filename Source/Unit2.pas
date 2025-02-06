@@ -53,6 +53,7 @@ type
     procedure DefTimeBtnClick(Sender: TObject);
     procedure SetEveryDayMonthBtnClick(Sender: TObject);
     procedure TodayBtnClick(Sender: TObject);
+    procedure NofifyNameEdtKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -130,17 +131,16 @@ end;
 procedure TAddDialog.NofifyNameEdtKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  //Убираем баг скрытия контролов
-  if Key = VK_MENU then
-    Key:=0
-  else if Key = VK_RETURN then
-    DoneBtn.Click;
+  if Key = VK_RETURN then
+    DoneBtn.Click
+  else if Key = VK_MENU then // Убираем баг скрытия контролов
+    Key:=0;
 end;
 
 procedure TAddDialog.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  //Убираем баг скрытия контролов
+  // Убираем баг скрытия контролов
   if Key = VK_MENU then
     Key:=0;
 end;
@@ -236,6 +236,14 @@ end;
 procedure TAddDialog.TodayBtnClick(Sender: TObject);
 begin
   DatePicker.Date:=Date;  
+end;
+
+procedure TAddDialog.NofifyNameEdtKeyPress(Sender: TObject; var Key: Char);
+begin
+  if (Length(NofifyNameEdt.Text) > 26) and (Key <> #8) then begin
+    Key := #0;
+    //MessageBeep(MB_ICONERROR);
+  end;
 end;
 
 end.

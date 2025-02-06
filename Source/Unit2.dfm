@@ -103,6 +103,7 @@ object AddDialog: TAddDialog
     Height = 21
     TabOrder = 19
     OnKeyDown = NofifyNameEdtKeyDown
+    OnKeyPress = NofifyNameEdtKeyPress
   end
   object TimePicker: TDateTimePicker
     Left = 116

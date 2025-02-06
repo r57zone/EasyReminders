@@ -444,8 +444,8 @@ end;
 procedure TMain.AboutBtnClick(Sender: TObject);
 begin
   AllowHide:=false;
-  Application.MessageBox(PChar(Caption + ' 0.5.2' + #13#10 +
-  IDS_LAST_UPDATE + ' 15.03.24' + #13#10 +
+  Application.MessageBox(PChar(Caption + ' 0.5.3' + #13#10 +
+  IDS_LAST_UPDATE + ' 06.02.25' + #13#10 +
   'https://r57zone.github.io' + #13#10 +
   'r57zone@gmail.com'), PChar(IDS_ABOUT), MB_ICONINFORMATION);
   AllowHide:=true;
@@ -477,17 +477,18 @@ end;
 
 procedure TMain.UpdateRemindersView;
 var
-  i: integer;
+  i: integer; Item: TListItem;
 begin
   ListView.Clear;
   for i:=0 to Length(Reminders) - 1 do begin
-    ListView.AddItem(DateToStr(Reminders[i].Date), nil);
-    ListView.Items.Item[ListView.Items.Count - 1].SubItems.Add( FormatDateTime('hh:nn:ss', Reminders[i].TimeSec / SecsPerDay) );
+    Item:=Main.ListView.Items.Add;
+    Item.Caption:=DateToStr(Reminders[i].Date);
+    Item.SubItems.Add( FormatDateTime('hh:nn:ss', Reminders[i].TimeSec / SecsPerDay) );
     if Reminders[i].RType <> EveryFewDaysType then
-      ListView.Items.Item[ListView.Items.Count - 1].SubItems.Add( ReminderTypeToStr( Reminders[i].RType ) )
+      Item.SubItems.Add( ReminderTypeToStr( Reminders[i].RType ) )
     else
-      ListView.Items.Item[ListView.Items.Count - 1].SubItems.Add( ReminderTypeToStr( Reminders[i].RType + '=' + IntToStr(Reminders[i].CountDays)) );
-    ListView.Items.Item[ListView.Items.Count - 1].SubItems.Add(Reminders[i].Name);
+      Item.SubItems.Add( ReminderTypeToStr( Reminders[i].RType + '=' + IntToStr(Reminders[i].CountDays)) );
+    Item.SubItems.Add(Reminders[i].Name);
   end;
 end;
 
