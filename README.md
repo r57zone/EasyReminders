@@ -12,8 +12,7 @@ Reminder apps for Windows. Add a reminder for a specific day, day and month, or 
 4. You can also install [Notification Center](https://github.com/r57zone/NotificationCenter) to see a reminder if you leave your computer.
 
 ## Screenshots
-![](https://user-images.githubusercontent.com/9499881/223116808-78bcff19-0502-42d2-b6f9-54c5e9a84830.png)
-![](https://user-images.githubusercontent.com/9499881/223116829-a3306950-55b3-4527-9070-9e9fea55933d.png)
+![](https://github.com/user-attachments/assets/39de686b-e2fd-4708-b888-4ee315a26a6c)
 
 ## Download
 >Version for Windows 7, 8.1, 10, 11.

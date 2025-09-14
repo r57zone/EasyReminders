@@ -78,12 +78,14 @@ procedure TAddDialog.DoneBtnClick(Sender: TObject);
 var
   RType: string; Reminder: TReminder;
 begin
-  if Trim(NofifyNameEdt.Text)='' then begin
+  if Trim(NofifyNameEdt.Text) = '' then begin
     AllowHide:=false;
     Application.MessageBox(PChar(IDS_NEED_ENTER_REMINDER_TITLE), PChar(Main.Caption), MB_ICONWARNING);
     AllowHide:=true;
     Exit;
   end;
+
+  NofifyNameEdt.Text:=StringReplace(NofifyNameEdt.Text, #9, ' ', [rfReplaceAll]);
 
   if ByDateRB.Checked then
     RType:='CD';

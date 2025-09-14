@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ComCtrls, XPMan, ShellAPI, DateUtils, Registry, Menus,
-  ExtCtrls, IniFiles;
+  ExtCtrls, IniFiles, ComObj;
 
 type
   TReminder = record
@@ -36,6 +36,7 @@ type
     ChangeBtn: TButton;
     N2: TMenuItem;
     AboutMenuBtn: TMenuItem;
+    SearchEdt: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure AddBtnClick(Sender: TObject);
     procedure RemBtnClick(Sender: TObject);
@@ -51,6 +52,13 @@ type
     procedure ChangeBtnClick(Sender: TObject);
     procedure AboutMenuBtnClick(Sender: TObject);
     procedure ListViewKeyPress(Sender: TObject; var Key: Char);
+    procedure SearchEdtChange(Sender: TObject);
+    procedure SearchEdtKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure SearchEdtMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure SearchEdtKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     procedure DefaultHandler(var Message); override;
     { Private declarations }
@@ -82,7 +90,7 @@ var
   AddDefaultTime: TTime; // Время по умолчанию в добавлении
   CurrentLanguage: string;
 
-  IDS_ADD, IDS_CHANGE, IDS_REMOVE_CONFIRM, IDS_ABOUT, IDS_LAST_UPDATE: string;
+  IDS_ADD, IDS_CHANGE, IDS_REMOVE_CONFIRM, IDS_SEARCH, IDS_ABOUT, IDS_LAST_UPDATE: string;
 
   IDS_REMINDER, IDS_CURRENT_DAY_TYPE, IDS_EVERY_FEW_DAYS_TYPE, IDS_EVERY_FEW_DAYS_TYPE2,
   IDS_EVERY_MONTH_AND_DAY_TYPE, IDS_CURRENT_DAY_MONTH_TYPE: string;
@@ -103,6 +111,8 @@ uses Unit2;
 
 {$R *.dfm}
 
+function GetUserDefaultUILanguage: LANGID; stdcall; external 'kernel32.dll';
+
 function GetNotificationAppPath: string;
 var
   Reg: TRegistry;
@@ -117,10 +127,10 @@ begin
   Reg.Free;
 end;
 
-procedure SendNotfication(NotifyTitle, NotifyDescription: string);
+procedure SendNotification(NotifyTitle, NotifyDescription: string);
 begin
   if NotificationApp = '' then Exit;
-  WinExec(PChar(NotificationApp + ' -t "' + NotifyTitle + '" -d "' + NotifyDescription + '" -b "Reminder.png" -c 2'), SW_SHOWNORMAL);
+  WinExec(PChar('"' + NotificationApp + '" -t "' + NotifyTitle + '" -d "' + NotifyDescription + '" -b "Reminder.png" -c 2'), SW_SHOWNORMAL);
 end;
 
 procedure TMain.AddReminder(Reminder: TReminder);
@@ -138,7 +148,7 @@ procedure RemReminder(ReminderIndex: integer);
 var
   i: integer;
 begin
-  if (ReminderIndex > -1) and (ReminderIndex <= Length(Reminders)) then begin
+  if (ReminderIndex > -1) and (ReminderIndex < Length(Reminders)) then begin
     for i:=ReminderIndex to Length(Reminders) - 2 do begin
       Reminders[i].Name:=Reminders[i + 1].Name;
       Reminders[i].RType:=Reminders[i + 1].RType;
@@ -211,21 +221,24 @@ end;
 function TMain.ReminderTypeToStr(TypeStr: string): string;
 begin
   if TypeStr = CurrentDayType then
-    Result:=IDS_CURRENT_DAY_TYPE;
+    Result:=IDS_CURRENT_DAY_TYPE
 
-  if Copy(TypeStr, 1, 3) = EveryFewDaysType + '=' then
-    Result:=Format(IDS_EVERY_FEW_DAYS_TYPE, [Copy(TypeStr, 4, Length(TypeStr))]);
+  else if Copy(TypeStr, 1, 3) = EveryFewDaysType + '=' then
+    Result:=Format(IDS_EVERY_FEW_DAYS_TYPE, [Copy(TypeStr, 4, Length(TypeStr))])
 
-  if TypeStr = EveryMonthAndDayType then // День месяца
-    Result:=IDS_EVERY_MONTH_AND_DAY_TYPE;
+  else if TypeStr = EveryMonthAndDayType then // День месяца
+    Result:=IDS_EVERY_MONTH_AND_DAY_TYPE
 
-  if TypeStr = CurrentDayMonthType then // День и месяц
-    Result:=IDS_CURRENT_DAY_MONTH_TYPE;
+  else if TypeStr = CurrentDayMonthType then // День и месяц
+    Result:=IDS_CURRENT_DAY_MONTH_TYPE
+
+  else
+    Result:=TypeStr;
 end;
 
 procedure TMain.Check;
 var
-  i, RemindersCount: integer;
+  i: integer;
   RemoveReminder: boolean;
   ChangeReminders: boolean;
 begin
@@ -237,7 +250,7 @@ begin
     // Дата (обычное)
     if Reminders[i].RType = CurrentDayType then
       if DateTimeToUnix(Now) >= DateTimeToUnix(Reminders[i].Date) + Reminders[i].TimeSec then begin
-        SendNotfication(IDS_REMINDER, Reminders[i].Name);
+        SendNotification(IDS_REMINDER, Reminders[i].Name);
         RemoveReminder:=true; // Разрешаем удаление
         ChangeReminders:=true;
       end;
@@ -247,7 +260,7 @@ begin
     // Каждые n дней
     if Reminders[i].RType = EveryFewDaysType then begin
       if (DaysBetween(Reminders[i].Date, Date) >= Reminders[i].CountDays) and (SecondOfTheDay(Time) > Reminders[i].TimeSec) then begin
-        SendNotfication(IDS_REMINDER, Reminders[i].Name);
+        SendNotification(IDS_REMINDER, Reminders[i].Name);
         Reminders[i].Date:=IncDay(Reminders[i].Date, Reminders[i].CountDays); // Обновляем дату оповещения
         Reminders[i].LastNoticeDate:=DateToStr(Date); // Запоминаем, что уже выводили в текущий день
         ChangeReminders:=true;
@@ -261,7 +274,7 @@ begin
          (DayOfTheMonth(Date) = DaysInAMonth(YearOf(Date), MonthOf(Date)) )) // Если текущий день равен кол-ву дней в месяце
 
       then begin
-        SendNotfication(IDS_REMINDER, Reminders[i].Name);
+        SendNotification(IDS_REMINDER, Reminders[i].Name);
         Reminders[i].LastNoticeDate:=DateToStr(Date);
         ChangeReminders:=true;
       end;
@@ -276,7 +289,7 @@ begin
             )
          ) // Если текущий день больше, чем в это месяце дней, то показываем в этот день (концец месяца)
        then begin
-        SendNotfication(IDS_REMINDER, Reminders[i].Name);
+        SendNotification(IDS_REMINDER, Reminders[i].Name);
         Reminders[i].LastNoticeDate:=DateToStr(Date);
         ChangeReminders:=true;
       end;
@@ -294,11 +307,11 @@ begin
 
 end;
 
-function GetLocaleInformation(Flag: Integer): string;
+function GetLocaleInformation(Flag: integer): string; // If there are multiple languages in the system (with sorting) / ???? ? ??????? ????????? ?????? (? ???????????)
 var
-  pcLCA: array [0..20] of Char;
+  pcLCA: array [0..63] of Char;
 begin
-  if GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, Flag, pcLCA, 19) <= 0 then
+  if GetLocaleInfo((DWORD(SORT_DEFAULT) shl 16) or Word(GetUserDefaultUILanguage), Flag, pcLCA, Length(pcLCA)) <= 0 then
     pcLCA[0]:=#0;
   Result:=pcLCA;
 end;
@@ -348,6 +361,7 @@ begin
     IDS_CHANGE:='Change';
     ChangeBtn.Caption:=IDS_CHANGE;
     RemBtn.Caption:='Remove';
+    IDS_SEARCH:='Search...';
     IDS_REMOVE_CONFIRM:='Remove this reminder?' + #13#10#13#10 + 'Name: %s' + #13#10 + 'Type: %s' + #13#10 + 'Date and time: %s';
 
     Caption:='Reminders';
@@ -382,6 +396,7 @@ begin
   end else begin
     IDS_ADD:='Добавить';
     IDS_CHANGE:='Изменить';
+    IDS_SEARCH:='Поиск...';
     IDS_REMOVE_CONFIRM:='Удалить это напоминание?' + #13#10#13#10 + 'Название: %s' + #13#10 + 'Тип: %s' + #13#10 + 'Дата и время: %s';
 
     IDS_REMINDER:='Напоминание';
@@ -402,6 +417,7 @@ begin
     IDS_NEED_ENTER_REMINDER_TITLE:='Необходимо ввести название напоминания';
     IDS_ADD_OLD_REMINDER:='Вы уверены, что хотите добавить старое напоминание?';
   end;
+  SearchEdt.Text:=IDS_SEARCH;
 
   Application.Title:=Caption;
   Tray(1);
@@ -444,8 +460,8 @@ end;
 procedure TMain.AboutBtnClick(Sender: TObject);
 begin
   AllowHide:=false;
-  Application.MessageBox(PChar(Caption + ' 0.5.3' + #13#10 +
-  IDS_LAST_UPDATE + ' 06.02.25' + #13#10 +
+  Application.MessageBox(PChar(Caption + ' 0.5.4' + #13#10 +
+  IDS_LAST_UPDATE + ' 14.09.25' + #13#10 +
   'https://r57zone.github.io' + #13#10 +
   'r57zone@gmail.com'), PChar(IDS_ABOUT), MB_ICONINFORMATION);
   AllowHide:=true;
@@ -526,6 +542,10 @@ end;
 procedure TMain.AppHide;
 begin
   AllowClose:=true;
+  if SearchEdt.Text <> IDS_SEARCH then begin
+    SearchEdt.Font.Color:=clGray;
+    SearchEdt.Text:=IDS_SEARCH;
+  end;
   ShowWindow(Handle, SW_HIDE);
 end;
 
@@ -645,6 +665,52 @@ begin
   if ListView.ItemIndex <> -1 then begin
     if Key = #13 then
       ListViewDblClick(Sender);
+  end;
+end;
+
+procedure TMain.SearchEdtChange(Sender: TObject);
+var
+  i: integer;
+begin
+  if ListView.Items.Count = 0 then Exit;
+  ListView.ItemIndex:=-1;
+  for i:=0 to ListView.Items.Count - 1 do
+    if Pos(AnsiLowerCase(SearchEdt.Text), AnsiLowerCase(ListView.Items.Item[i].SubItems[2])) > 0 then begin
+
+        ScrollToListviewItem(ListView, i);
+        //ListView.ItemIndex:=i;
+        ListView.Items.Item[i].Selected:=true;
+      Break;
+    end;
+end;
+
+procedure TMain.SearchEdtKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_MENU then // Fixing the bug that hides controls / Убираем баг скрытия контролов
+    Key:=0;
+
+  if SearchEdt.Text = IDS_SEARCH then begin
+    SearchEdt.Font.Color:=clBlack;
+    SearchEdt.Clear;
+  end;
+end;
+
+procedure TMain.SearchEdtMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if SearchEdt.Text = IDS_SEARCH then begin
+    SearchEdt.Font.Color:=clBlack;
+    SearchEdt.Clear;
+  end;
+end;
+
+procedure TMain.SearchEdtKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if SearchEdt.Text = '' then begin
+    SearchEdt.Font.Color:=clGray;
+    SearchEdt.Text:=IDS_SEARCH;
   end;
 end;
 

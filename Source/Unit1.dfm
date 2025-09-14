@@ -52,6 +52,7 @@ object Main: TMain
         Caption = #1053#1072#1087#1086#1084#1080#1085#1072#1085#1080#1077
         Width = 210
       end>
+    HideSelection = False
     ReadOnly = True
     RowSelect = True
     PopupMenu = ListViewPopupMenu
@@ -61,7 +62,7 @@ object Main: TMain
     OnKeyPress = ListViewKeyPress
   end
   object RemBtn: TButton
-    Left = 167
+    Left = 169
     Top = 271
     Width = 75
     Height = 25
@@ -79,13 +80,30 @@ object Main: TMain
     OnClick = AboutBtnClick
   end
   object ChangeBtn: TButton
-    Left = 87
+    Left = 88
     Top = 271
     Width = 75
     Height = 25
     Caption = #1048#1079#1084#1077#1085#1080#1090#1100
     TabOrder = 2
     OnClick = ChangeBtnClick
+  end
+  object SearchEdt: TEdit
+    Left = 251
+    Top = 273
+    Width = 180
+    Height = 21
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clGray
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 5
+    OnChange = SearchEdtChange
+    OnKeyDown = SearchEdtKeyDown
+    OnKeyUp = SearchEdtKeyUp
+    OnMouseDown = SearchEdtMouseDown
   end
   object XPManifest1: TXPManifest
     Left = 16
