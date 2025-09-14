@@ -10,7 +10,8 @@
 4. Можно также установить [Центр уведомлений](https://github.com/r57zone/NotificationCenter), чтобы увидеть напоминание, если вы отошли от компьютера.
 
 ## Скриншоты
-![](https://github.com/user-attachments/assets/9f305c74-1f56-4a7d-86fa-3f093840d645)
+![](https://github.com/user-attachments/assets/66e73519-07a6-483c-beb7-5c24370626dd)
+![](https://github.com/user-attachments/assets/2818735e-0f8b-4783-87f5-f09dd993330a)
 
 ## Загрузка
 >Версии для Windows 7, 8.1, 10, 11.
