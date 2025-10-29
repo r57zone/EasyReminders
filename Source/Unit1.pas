@@ -24,7 +24,7 @@ type
     ListView: TListView;
     RemBtn: TButton;
     AboutBtn: TButton;
-    PopupMenu1: TPopupMenu;
+    PopupMenuApp: TPopupMenu;
     CloseMenuBtn: TMenuItem;
     TimerChecker: TTimer;
     ListViewPopupMenu: TPopupMenu;
@@ -59,6 +59,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure SearchEdtKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure FormActivate(Sender: TObject);
   private
     procedure DefaultHandler(var Message); override;
     { Private declarations }
@@ -74,7 +75,7 @@ type
     { Public declarations }
   protected
     procedure IconMouse(var Msg: TMessage); message WM_USER + 1;
-    procedure WMActivate(var Msg: TMessage); message WM_ACTIVATE;
+    //procedure WMActivate(var Msg: TMessage); message WM_ACTIVATE;
   end;
 
 var
@@ -316,7 +317,8 @@ begin
   Result:=pcLCA;
 end;
 
-procedure Tray(ActInd: integer);  // 1 - добавить, 2 - обновить, 3 - удалить
+type TTrayAction = (TrayAdd, TrayUpdate, TrayDelete);
+procedure Tray(TrayAction: TTrayAction);
 var
   NIM: TNotifyIconData;
 begin
@@ -325,14 +327,14 @@ begin
     Wnd:=Main.Handle;
     uId:=1;
     uFlags:=NIF_MESSAGE or NIF_ICON or NIF_TIP;
-    hIcon:=SendMessage(Application.Handle, WM_GETICON, ICON_SMALL2, 0);
+    hIcon:=SendMessage(Main.Handle, WM_GETICON, ICON_SMALL2, 0);
     uCallBackMessage:=WM_USER + 1;
     StrCopy(szTip, PChar(Application.Title));
   end;
-  case ActInd of
-    1: Shell_NotifyIcon(NIM_ADD, @NIM);
-    2: Shell_NotifyIcon(NIM_MODIFY, @NIM);
-    3: Shell_NotifyIcon(NIM_DELETE, @NIM);
+  case TrayAction of
+    TrayAdd: Shell_NotifyIcon(NIM_ADD, @NIM);
+    TrayUpdate: Shell_NotifyIcon(NIM_MODIFY, @NIM);
+    TrayDelete: Shell_NotifyIcon(NIM_DELETE, @NIM);
   end;
 end;
 
@@ -341,7 +343,6 @@ var
   Ini: TIniFile; i: integer;
 begin
   WM_TASKBARCREATED:=RegisterWindowMessage('TaskbarCreated');
-  AppHide;
 
   DBFileName:=ExtractFilePath(ParamStr(0)) + 'Reminders.txt';
   for i:=1 to ParamCount do
@@ -420,7 +421,7 @@ begin
   SearchEdt.Text:=IDS_SEARCH;
 
   Application.Title:=Caption;
-  Tray(1);
+  Tray(TrayAdd);
 
   NotificationApp:=GetNotificationAppPath;
   if NotificationApp = '' then Application.MessageBox(PChar(IDS_NOTIFICATION_APP_NOT_FOUND), PChar(Caption), MB_ICONWARNING);
@@ -430,7 +431,7 @@ begin
     UpdateRemindersView;
   end;
 
-  SetWindowLong(Application.Handle, GWL_EXSTYLE, GetWindowLong(Application.Handle, GWL_EXSTYLE) or WS_EX_TOOLWINDOW);
+  //SetWindowLong(Application.Handle, GWL_EXSTYLE, GetWindowLong(Application.Handle, GWL_EXSTYLE) or WS_EX_TOOLWINDOW);
 end;
 
 procedure TMain.AddBtnClick(Sender: TObject);
@@ -460,8 +461,8 @@ end;
 procedure TMain.AboutBtnClick(Sender: TObject);
 begin
   AllowHide:=false;
-  Application.MessageBox(PChar(Caption + ' 0.5.4' + #13#10 +
-  IDS_LAST_UPDATE + ' 14.09.25' + #13#10 +
+  Application.MessageBox(PChar(Caption + ' 0.5.5' + #13#10 +
+  IDS_LAST_UPDATE + ' 29.10.25' + #13#10 +
   'https://r57zone.github.io' + #13#10 +
   'r57zone@gmail.com'), PChar(IDS_ABOUT), MB_ICONINFORMATION);
   AllowHide:=true;
@@ -511,31 +512,32 @@ end;
 procedure TMain.DefaultHandler(var Message);
 begin
   if TMessage(Message).Msg = WM_TASKBARCREATED then
-    Tray(1);
+    Tray(TrayAdd);
   inherited;
 end;
 
 procedure TMain.IconMouse(var Msg: TMessage);
 begin
   case Msg.LParam of
-    WM_LBUTTONDOWN: //WM_LBUTTONDBLCLK:
+    WM_LBUTTONDOWN:
       begin
         // Скрываем PopupMenu, если показан
         PostMessage(Handle, WM_LBUTTONDOWN, MK_LBUTTON, 0);
         PostMessage(Handle, WM_LBUTTONUP, MK_LBUTTON, 0);
-
-        if IsWindowVisible(Main.Handle) then AppHide else AppShow;
       end;
 
+    WM_LBUTTONDBLCLK:
+        if IsWindowVisible(Handle) then AppHide else AppShow;
+
     WM_RBUTTONDOWN:
-      PopupMenu1.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+      PopupMenuApp.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
   end;
 end;
 
 procedure TMain.FormDestroy(Sender: TObject);
 begin
   TimerChecker.Enabled:=false;
-  Tray(3);
+  Tray(TrayDelete);
   AllowClose:=true;
 end;
 
@@ -546,20 +548,18 @@ begin
     SearchEdt.Font.Color:=clGray;
     SearchEdt.Text:=IDS_SEARCH;
   end;
-  ShowWindow(Handle, SW_HIDE);
+  Tray(TrayAdd);
+  ShowWindow(Main.Handle, SW_HIDE);  // Скрываем программу
+  ShowWindow(Application.Handle, SW_HIDE);  // Скрываем с панели задач
 end;
 
 procedure TMain.AppShow;
 begin
   AllowClose:=false;
-  if Main.AlphaBlend then begin
-    Main.AlphaBlendValue:=255;
-    Main.AlphaBlend:=false;
-  end;
-  ShowWindow(Handle, SW_SHOW);
+  ShowWindow(Main.Handle, SW_SHOW);  // Показываем программу
+  ShowWindow(Application.Handle, SW_SHOW);  // Показываем программу на панели задач
+  Tray(TrayDelete);
   SetForegroundWindow(Handle);
-  if AddDialog.Showing then
-    SetForegroundWindow(AddDialog.Handle);
 end;
 
 procedure TMain.CloseMenuBtnClick(Sender: TObject);
@@ -570,6 +570,7 @@ end;
 
 procedure TMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
+  if AddDialog.Visible then AddDialog.Close;
   if AllowClose = false then CanClose:=false;
   AppHide;
 end;
@@ -653,12 +654,12 @@ begin
   AboutBtn.Click;
 end;
 
-procedure TMain.WMActivate(var Msg: TMessage);
+{procedure TMain.WMActivate(var Msg: TMessage);
 begin
   if (AllowHide) and (Msg.WParam = WA_INACTIVE) then
     AppHide;
   inherited;
-end;
+end;}
 
 procedure TMain.ListViewKeyPress(Sender: TObject; var Key: Char);
 begin
@@ -711,6 +712,15 @@ begin
   if SearchEdt.Text = '' then begin
     SearchEdt.Font.Color:=clGray;
     SearchEdt.Text:=IDS_SEARCH;
+  end;
+end;
+
+procedure TMain.FormActivate(Sender: TObject);
+begin
+  if Main.AlphaBlend then begin
+    AppHide;
+    Main.AlphaBlendValue:=255;
+    Main.AlphaBlend:=false;
   end;
 end;
 

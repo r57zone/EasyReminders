@@ -2,8 +2,7 @@ object Main: TMain
   Left = 192
   Top = 124
   AlphaBlend = True
-  AlphaBlendValue = 0
-  BorderIcons = [biSystemMenu]
+  BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = #1053#1072#1087#1086#1084#1080#1085#1072#1085#1080#1103
   ClientHeight = 303
@@ -16,6 +15,7 @@ object Main: TMain
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnActivate = FormActivate
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -109,7 +109,7 @@ object Main: TMain
     Left = 16
     Top = 32
   end
-  object PopupMenu1: TPopupMenu
+  object PopupMenuApp: TPopupMenu
     Left = 48
     Top = 32
     object AboutMenuBtn: TMenuItem
