@@ -461,8 +461,8 @@ end;
 procedure TMain.AboutBtnClick(Sender: TObject);
 begin
   AllowHide:=false;
-  Application.MessageBox(PChar(Caption + ' 0.5.5' + #13#10 +
-  IDS_LAST_UPDATE + ' 29.10.25' + #13#10 +
+  Application.MessageBox(PChar(Caption + ' 0.5.6' + #13#10 +
+  IDS_LAST_UPDATE + ' 03.01.26' + #13#10 +
   'https://r57zone.github.io' + #13#10 +
   'r57zone@gmail.com'), PChar(IDS_ABOUT), MB_ICONINFORMATION);
   AllowHide:=true;
@@ -470,22 +470,45 @@ end;
 
 procedure TMain.ListViewDblClick(Sender: TObject);
 var
-  Str: string; DayC: integer;
+  Str: string; DayC: integer; LastDate, NextDate: TDateTime;
 begin
   if ListView.ItemIndex = -1 then Exit;
   AllowHide:=false;
 
-  Str:=#13#10 + IDS_NOTIFICATION_DATE + ': ' + DateToStr(Reminders[ListView.ItemIndex].Date);
-
-  if Reminders[ListView.ItemIndex].RType = EveryFewDaysType then begin
-    DayC:=Reminders[ListView.ItemIndex].CountDays;
-    Str:=Str + #13#10 + IDS_LAST_NOTIFICATION_DATE + ': ' + DateToStr(IncDay(Reminders[ListView.ItemIndex].Date, DayC));
-    Str:=Str + #13#10 + IDS_LEFT_DAYS + ': ' + IntToStr(DaysBetween( IncDay( Reminders[ListView.ItemIndex].Date, DayC ), Date ));
-
-    Str:=Str + #13#10 + IDS_DAYS_HAVE_PASSED + ': ' + IntToStr(DaysBetween( Reminders[ListView.ItemIndex].Date , Date ));
-  end else begin
+  // Определенный день
+  if Reminders[ListView.ItemIndex].RType = CurrentDayType then begin // - CD
+    Str:=#13#10 + IDS_NOTIFICATION_DATE + ': ' + DateToStr(Reminders[ListView.ItemIndex].Date);
     if Reminders[ListView.ItemIndex].Date > Date then
       Str:=Str + #13#10 + IDS_LEFT_DAYS + ': ' + IntToStr(DaysBetween( Reminders[ListView.ItemIndex].Date, Date ));
+
+  end else begin
+    if Trim(Reminders[ListView.ItemIndex].LastNoticeDate) = '00.00.0000' then
+      LastDate:=Reminders[ListView.ItemIndex].Date
+    else
+      LastDate:=StrToDate(Reminders[ListView.ItemIndex].LastNoticeDate);
+
+    // Рассчитываем NextDate в зависимости от типа
+    if Reminders[ListView.ItemIndex].RType = EveryMonthAndDayType then begin // День месяца
+      NextDate:=IncMonth(
+        StartOfTheMonth(Now) + (DayOfTheMonth(Reminders[ListView.ItemIndex].Date) - 1),
+        Ord(DayOfTheMonth(Reminders[ListView.ItemIndex].Date) <= DayOfTheMonth(Now))
+      );
+
+    end else if Reminders[ListView.ItemIndex].RType = CurrentDayMonthType then begin // Определенный день и месяц
+      NextDate:=EncodeDate(YearOf(Now), MonthOf(Reminders[ListView.ItemIndex].Date), DayOf(Reminders[ListView.ItemIndex].Date));
+      if NextDate <= Date then
+        NextDate:=IncYear(NextDate, 1);
+
+    end else if Reminders[ListView.ItemIndex].RType = EveryFewDaysType then begin // Каждые несколько дней
+      DayC:=Reminders[ListView.ItemIndex].CountDays;
+      NextDate:=IncDay(Reminders[ListView.ItemIndex].Date, DayC);
+    end;
+
+    // Общий вывод для всех типов
+    Str:=#13#10 + IDS_NOTIFICATION_DATE + ': ' + DateToStr(NextDate) +
+         #13#10 + IDS_LAST_NOTIFICATION_DATE + ': ' + DateToStr(LastDate) +
+         #13#10 + IDS_LEFT_DAYS + ': ' + IntToStr(DaysBetween(NextDate, Date)) +
+         #13#10 + IDS_DAYS_HAVE_PASSED + ': ' + IntToStr(DaysBetween(LastDate, Date));
   end;
 
   Application.MessageBox(PChar(IDS_REMINDER + ':' + #13#10 + Reminders[ListView.ItemIndex].Name + #13#10 + Str), PChar(IDS_REMINDER), MB_ICONINFORMATION);
