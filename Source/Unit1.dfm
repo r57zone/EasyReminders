@@ -151,5 +151,12 @@ object Main: TMain
         OnClick = MoveDownBtnClick
       end
     end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object RemBtn2: TMenuItem
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+      OnClick = RemBtn2Click
+    end
   end
 end

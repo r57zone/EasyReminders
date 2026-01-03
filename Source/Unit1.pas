@@ -37,6 +37,8 @@ type
     N2: TMenuItem;
     AboutMenuBtn: TMenuItem;
     SearchEdt: TEdit;
+    N3: TMenuItem;
+    RemBtn2: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure AddBtnClick(Sender: TObject);
     procedure RemBtnClick(Sender: TObject);
@@ -60,6 +62,7 @@ type
     procedure SearchEdtKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormActivate(Sender: TObject);
+    procedure RemBtn2Click(Sender: TObject);
   private
     procedure DefaultHandler(var Message); override;
     { Private declarations }
@@ -362,6 +365,7 @@ begin
     IDS_CHANGE:='Change';
     ChangeBtn.Caption:=IDS_CHANGE;
     RemBtn.Caption:='Remove';
+    RemBtn2.Caption:=RemBtn.Caption;
     IDS_SEARCH:='Search...';
     IDS_REMOVE_CONFIRM:='Remove this reminder?' + #13#10#13#10 + 'Name: %s' + #13#10 + 'Type: %s' + #13#10 + 'Date and time: %s';
 
@@ -745,6 +749,11 @@ begin
     Main.AlphaBlendValue:=255;
     Main.AlphaBlend:=false;
   end;
+end;
+
+procedure TMain.RemBtn2Click(Sender: TObject);
+begin
+  RemBtn.Click;
 end;
 
 end.
