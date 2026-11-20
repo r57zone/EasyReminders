@@ -102,6 +102,7 @@ object AddDialog: TAddDialog
     Width = 225
     Height = 21
     TabOrder = 19
+    OnChange = NofifyNameEdtChange
     OnKeyDown = NofifyNameEdtKeyDown
     OnKeyPress = NofifyNameEdtKeyPress
   end

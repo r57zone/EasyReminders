@@ -63,6 +63,8 @@ type
       Shift: TShiftState);
     procedure FormActivate(Sender: TObject);
     procedure RemBtn2Click(Sender: TObject);
+    procedure ListViewKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     procedure DefaultHandler(var Message); override;
     { Private declarations }
@@ -465,8 +467,8 @@ end;
 procedure TMain.AboutBtnClick(Sender: TObject);
 begin
   AllowHide:=false;
-  Application.MessageBox(PChar(Caption + ' 0.5.6' + #13#10 +
-  IDS_LAST_UPDATE + ' 03.01.26' + #13#10 +
+  Application.MessageBox(PChar(Caption + ' 0.6' + #13#10 +
+  IDS_LAST_UPDATE + ' 19.11.26' + #13#10 +
   'https://r57zone.github.io' + #13#10 +
   'r57zone@gmail.com'), PChar(IDS_ABOUT), MB_ICONINFORMATION);
   AllowHide:=true;
@@ -690,10 +692,9 @@ end;}
 
 procedure TMain.ListViewKeyPress(Sender: TObject; var Key: Char);
 begin
-  if ListView.ItemIndex <> -1 then begin
-    if Key = #13 then
-      ListViewDblClick(Sender);
-  end;
+  if ListView.ItemIndex = -1 then Exit;
+  if Key = Char(VK_RETURN) then
+    ListViewDblClick(Sender);
 end;
 
 procedure TMain.SearchEdtChange(Sender: TObject);
@@ -754,6 +755,13 @@ end;
 procedure TMain.RemBtn2Click(Sender: TObject);
 begin
   RemBtn.Click;
+end;
+
+procedure TMain.ListViewKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key = VK_DELETE) or (Key = VK_DECIMAL) then
+    RemBtnClick(Sender);
 end;
 
 end.

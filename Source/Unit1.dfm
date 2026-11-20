@@ -59,6 +59,7 @@ object Main: TMain
     TabOrder = 0
     ViewStyle = vsReport
     OnDblClick = ListViewDblClick
+    OnKeyDown = ListViewKeyDown
     OnKeyPress = ListViewKeyPress
   end
   object RemBtn: TButton

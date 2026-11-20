@@ -54,6 +54,7 @@ type
     procedure SetEveryDayMonthBtnClick(Sender: TObject);
     procedure TodayBtnClick(Sender: TObject);
     procedure NofifyNameEdtKeyPress(Sender: TObject; var Key: Char);
+    procedure NofifyNameEdtChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -242,9 +243,22 @@ end;
 
 procedure TAddDialog.NofifyNameEdtKeyPress(Sender: TObject; var Key: Char);
 begin
-  if (Length(NofifyNameEdt.Text) > 26) and (Key <> #8) then begin
-    Key := #0;
+  // Разрешаем управляющие символы (копирование, вставка, удаление и т. д.)
+  if (Key < #32) then
+    Exit;
+
+  // Учитываем выделенный текст, который будет заменён вводимыми символами
+  if (Length(NofifyNameEdt.Text) - NofifyNameEdt.SelLength >= 26) then begin
+    Key:=#0;
     //MessageBeep(MB_ICONERROR);
+  end;
+end;
+
+procedure TAddDialog.NofifyNameEdtChange(Sender: TObject);
+begin
+  if Length(NofifyNameEdt.Text) > 26 then begin
+    NofifyNameEdt.Text:=Copy(NofifyNameEdt.Text, 1, 26);
+    NofifyNameEdt.SelStart:=Length(NofifyNameEdt.Text);
   end;
 end;
 

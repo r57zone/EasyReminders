@@ -14,9 +14,9 @@
 ![](https://github.com/user-attachments/assets/2818735e-0f8b-4783-87f5-f09dd993330a)
 
 ## Загрузка
->Версии для Windows 7, 8.1, 10, 11.
+>Версии для Windows XP, Vista, 7, 8, 8.1, 10, 11.
 
 **[Загрузить](https://github.com/r57zone/EasyReminders/releases)**
 
 ## Обратная связь
-`r57zone[собака]gmail.com`
+`r57zone@gmail.com`

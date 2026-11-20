@@ -16,9 +16,9 @@ Reminder apps for Windows. Add a reminder for a specific day, day and month, or 
 ![](https://github.com/user-attachments/assets/fcb33bb7-3a49-4407-988d-aa97cc406c59)
 
 ## Download
->Version for Windows 7, 8.1, 10, 11.
+>Version for Windows XP, Vista, 7, 8, 8.1, 10, 11.
 
 **[Download](https://github.com/r57zone/EasyReminders/releases)**
 
 ## Feedback
-`r57zone[at]gmail.com`
+`r57zone@gmail.com`
